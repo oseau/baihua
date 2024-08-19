@@ -4,16 +4,16 @@
 IMAGE_NAME = hanlp-app
 CONTAINER_NAME = hanlp-container
 
+# Default target: build and run
+all: build run
+
 # Build the Docker image
 build:
 	docker build -t $(IMAGE_NAME) .
 
 # Run the Docker container
 run:
-	docker run -it --name $(CONTAINER_NAME) $(IMAGE_NAME)
-
-# Build and run in one command
-all: build run
+	docker run -it --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
 
 # Stop and remove the container
 clean:
