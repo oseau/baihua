@@ -1,10 +1,10 @@
-FROM eclipse-temurin:11-jre-alpine as java
-FROM python:3.8-alpine
+FROM openjdk:11-jre-slim as java
+FROM python:3.8-slim
 
 # Copy Java from the java image
-COPY --from=java /opt/java/openjdk /usr/lib/jvm/java-11-openjdk
+COPY --from=java /usr/local/openjdk-11 /usr/local/openjdk-11
 
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk
+ENV JAVA_HOME /usr/local/openjdk-11
 ENV PATH $PATH:$JAVA_HOME/bin
 
 ENV PYTHONUNBUFFERED 1
@@ -12,9 +12,11 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 # Install build dependencies, install Python packages, then remove build dependencies
 COPY requirements.txt /requirements.txt
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc libc6-dev && \
     pip install --no-cache-dir -r /requirements.txt && \
-    apk del .build-deps
+    apt-get purge -y --auto-remove gcc libc6-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 # Verify Java installation
 RUN java -version
