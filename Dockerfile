@@ -1,8 +1,8 @@
-FROM openjdk:11-jre-alpine as java
+FROM eclipse-temurin:11-jre-alpine as java
 FROM python:3.8-alpine
 
 # Copy Java from the java image
-COPY --from=java /usr/lib/jvm/java-11-openjdk /usr/lib/jvm/java-11-openjdk
+COPY --from=java /opt/java/openjdk /usr/lib/jvm/java-11-openjdk
 
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk
 ENV PATH $PATH:$JAVA_HOME/bin
