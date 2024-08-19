@@ -1,15 +1,20 @@
-FROM openjdk:11-jdk-slim as java
-FROM python:3.8-bookworm
+FROM openjdk:11-jre-alpine as java
+FROM python:3.8-alpine
 
-COPY --from=java /usr/local/openjdk-11 /usr/local/openjdk-11
+# Copy Java from the java image
+COPY --from=java /usr/lib/jvm/java-11-openjdk /usr/lib/jvm/java-11-openjdk
 
-ENV JAVA_HOME /usr/local/openjdk-11
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk
 ENV PATH $PATH:$JAVA_HOME/bin
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
+
+# Install build dependencies, install Python packages, then remove build dependencies
 COPY requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev && \
+    pip install --no-cache-dir -r /requirements.txt && \
+    apk del .build-deps
 
 # Verify Java installation
 RUN java -version
