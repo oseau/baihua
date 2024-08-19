@@ -13,3 +13,15 @@ RUN pip install -r /requirements.txt
 
 # Verify Java installation
 RUN java -version
+
+# Download and set up HanLP models
+RUN python -c "from pyhanlp import *; HanLP.segment('测试一下')"
+
+# Copy the main.py file into the container
+COPY main.py /app/main.py
+
+# Set the working directory
+WORKDIR /app
+
+# Run the main.py script when the container launches
+CMD ["python", "main.py"]
