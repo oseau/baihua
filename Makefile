@@ -13,6 +13,7 @@ build:
 
 # Run the Docker container
 run:
+	docker rm -f $(CONTAINER_NAME) 2>/dev/null || true
 	docker run -it --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
 
 # Stop and remove the container
